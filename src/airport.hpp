@@ -3,6 +3,7 @@
 #include "GL/displayable.hpp"
 #include "GL/dynamic_object.hpp"
 #include "GL/texture.hpp"
+#include "aircraft_manager.hpp"
 #include "airport_type.hpp"
 #include "geometry.hpp"
 #include "img/image.hpp"
@@ -20,7 +21,10 @@ private:
     const GL::Texture2D texture;
     std::vector<Terminal> terminals;
     Tower tower;
-
+    AircraftManager* aircraft_manager;
+    int fuel_stock       = 0;
+    int ordered_fuel     = 0;
+    int next_refill_time = 0;
     // reserve a terminal
     // if a terminal is free, return
     // 1. a sequence of waypoints reaching the terminal from the runway-end and
@@ -51,14 +55,17 @@ private:
     Terminal& get_terminal(const size_t terminal_num) { return terminals.at(terminal_num); }
 
 public:
-    Airport(const AirportType& type_, const Point3D& pos_, const img::Image* image, const float z_ = 1.0f) :
+    Airport(const AirportType& type_, const Point3D& pos_, const img::Image* image, AircraftManager& manager,
+            const float z_ = 1.0f) :
         GL::Displayable { z_ },
         type { type_ },
         pos { pos_ },
         texture { image },
         terminals { type.create_terminals() },
         tower { *this }
-    {}
+    {
+        aircraft_manager = &manager;
+    }
 
     Tower& get_tower() { return tower; }
 
@@ -66,10 +73,25 @@ public:
 
     bool move() override
     {
-        for (auto& t : terminals)
+        if (next_refill_time == 0)
         {
-            t.move();
+            std::cout << "Order of fuel : " << aircraft_manager->get_required_fuel() << std::endl;
+            std::cout << "Last fuel stock : " << fuel_stock << std::endl;
+            fuel_stock += ordered_fuel;
+            std::cout << "New fuel stock : " << fuel_stock << std::endl;
+            ordered_fuel     = std::min(aircraft_manager->get_required_fuel(), MAX_FUEL_KERO);
+            next_refill_time = 100;
         }
+        else
+        {
+            next_refill_time -= 1;
+            for (auto& t : terminals)
+            {
+                t.refill_aircraft_if_needed(fuel_stock);
+                t.move();
+            }
+        }
+
         return true;
     }
 

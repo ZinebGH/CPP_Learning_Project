@@ -101,6 +101,17 @@ bool Aircraft::move()
 
     if (!is_at_terminal)
     {
+        if (is_circling())
+        {
+            auto new_waypoints = control.reserve_terminal(*this);
+            if (!new_waypoints.empty())
+            {
+                waypoints = std::move(new_waypoints);
+            }
+        }
+
+        fuel_level();
+
         turn_to_waypoint();
         // move in the direction of the current speed
         pos += speed;
@@ -146,4 +157,36 @@ bool Aircraft::move()
 void Aircraft::display() const
 {
     type.texture.draw(project_2D(pos), { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
+}
+
+bool Aircraft::has_terminal() const
+{
+    return !waypoints.empty() && waypoints.back().is_at_terminal();
+};
+
+bool Aircraft::is_circling() const
+{
+    return !has_terminal() && !is_at_terminal && !service_done;
+}
+
+void Aircraft::fuel_level()
+{
+    if (max_speed() == speed.length())
+    {
+        fuel -= type.fuel_level;
+    }
+    else
+    {
+        fuel--;
+    }
+
+    if (fuel <= 0)
+    {
+        std::cout << "Aircraft " << flight_number << " crashed !" << std::endl;
+    }
+}
+
+int Aircraft::level_of_fuel() const
+{
+    return fuel;
 }

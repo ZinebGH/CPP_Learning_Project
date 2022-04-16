@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 
 namespace GL {
@@ -22,6 +23,8 @@ public:
     virtual void display() const = 0;
 
     float get_z() const { return z; }
+
+    static inline std::vector<const Displayable*> display_queue;
 };
 
 struct disp_z_cmp
@@ -33,7 +36,5 @@ struct disp_z_cmp
         return (az == bz) ? (a > b) : (az > bz);
     }
 };
-
-static inline std::vector<const Displayable*> display_queue;
 
 } // namespace GL
