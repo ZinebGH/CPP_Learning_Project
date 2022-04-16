@@ -60,7 +60,7 @@ public:
         control { control_ }
     {
         speed.cap_length(max_speed());
-        fuel = MIN_FUEL + (std::rand() % (MAX_FUEL - MIN_FUEL));
+        fuel = MIN_FUEL + (std::rand() % (2 * MIN_FUEL));
     }
 
     const std::string& get_flight_num() const { return flight_number; }
@@ -74,14 +74,25 @@ public:
 
     void refill(int& fuel_stock)
     {
+        std::cout << fuel << " FUEL  " << std::endl;
+        std::cout << fuel_stock << " FUEL STOCK " << std::endl;
+
         int fuel_need = MAX_FUEL - fuel;
+        int fuel_refill;
         if (fuel_stock <= fuel_need)
         {
-            fuel_need = fuel_stock;
+            fuel_refill = fuel_stock;
         }
-
-        fuel_stock -= fuel_need;
-        fuel += fuel_need;
+        else
+        {
+            fuel_refill = fuel_need;
+        }
+        if (fuel_stock > 0)
+        {
+            fuel_stock -= fuel_refill;
+            fuel += fuel_refill;
+            std::cout << fuel << " FUEL 2 " << std::endl;
+        }
     }
 
     friend class Tower;

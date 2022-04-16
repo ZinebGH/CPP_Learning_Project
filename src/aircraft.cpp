@@ -101,6 +101,8 @@ bool Aircraft::move()
 
     if (!is_at_terminal)
     {
+        fuel_level();
+
         if (is_circling())
         {
             auto new_waypoints = control.reserve_terminal(*this);
@@ -109,8 +111,6 @@ bool Aircraft::move()
                 waypoints = std::move(new_waypoints);
             }
         }
-
-        fuel_level();
 
         turn_to_waypoint();
         // move in the direction of the current speed
@@ -135,7 +135,7 @@ bool Aircraft::move()
             if (!landing_gear_deployed)
             {
                 using namespace std::string_literals;
-                throw AircraftCrash { flight_number + " crashed into the ground"s };
+                throw AircraftCrash { flight_number + " crashed into the ground" };
             }
         }
         else
@@ -182,7 +182,7 @@ void Aircraft::fuel_level()
 
     if (fuel <= 0)
     {
-        std::cout << "Aircraft " << flight_number << " crashed !" << std::endl;
+        throw AircraftCrash { flight_number + " crashed of fuel" };
     }
 }
 

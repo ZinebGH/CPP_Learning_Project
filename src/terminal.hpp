@@ -52,13 +52,13 @@ public:
     {
         if (current_aircraft != nullptr && current_aircraft->is_low_on_fuel() &&
             current_aircraft->in_terminal())
+
         {
+
             current_aircraft->refill(fuel_stock);
-            if (!is_servicing())
-            {
-                std::cout << current_aircraft->get_flight_num() << " refill  "
-                          << current_aircraft->level_of_fuel() << " fuel  " << std::endl;
-            }
+
+            std::cout << current_aircraft->get_flight_num()
+                      << " refill : " << current_aircraft->level_of_fuel() << " fuel 3 " << std::endl;
         }
     }
 };

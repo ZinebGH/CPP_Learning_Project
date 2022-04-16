@@ -27,5 +27,7 @@ public:
 
     int get_required_fuel();
 
+    void number_of_crash() { std::cout << "Number crashed : " << crash_count << std::endl; }
+
     friend class Airport;
 };

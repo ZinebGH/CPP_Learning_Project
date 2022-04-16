@@ -13,8 +13,7 @@ void AircraftManager::print_aircrafts()
                   [](auto& a1)
                   {
                       std::cout << a1->get_flight_num() << " has terminal " << a1->has_terminal()
-
-                                << std::endl;
+                                << "level fuel : " << a1->level_of_fuel() << std::endl;
                   });
 }
 
@@ -23,14 +22,14 @@ bool AircraftManager::move()
     std::sort(aircrafts.begin(), aircrafts.end(),
               [](auto& a1, auto& a2)
               {
-                  if ((a1->has_terminal() && !a2->has_terminal()))
-                  {
-                      return true;
-                  }
-                  else if ((!a1->has_terminal() && !a2->has_terminal()) ||
-                           (a1->has_terminal() && a2->has_terminal()))
+                  if ((!a1->has_terminal() && !a2->has_terminal()) ||
+                      (a1->has_terminal() && a2->has_terminal()))
                   {
                       return a1->level_of_fuel() > a2->level_of_fuel();
+                  }
+                  else if ((a1->has_terminal() && !a2->has_terminal()))
+                  {
+                      return true;
                   }
 
                   else
@@ -40,10 +39,16 @@ bool AircraftManager::move()
               });
 
     aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(),
-                                   [](auto& aircraft)
+                                   [this](auto& aircraft)
                                    {
+                                       try
                                        {
                                            return !aircraft->move();
+                                       } catch (AircraftCrash& e)
+                                       {
+                                           crash_count++;
+                                           std::cerr << e.what() << std::endl;
+                                           return true;
                                        }
                                    }),
                     aircrafts.end());
@@ -66,7 +71,6 @@ int AircraftManager::get_required_fuel()
                   {
                       if (a->in_terminal() && a->is_low_on_fuel())
                       {
-                          std::cout << i << std::endl;
                           i += (MAX_FUEL - a->level_of_fuel());
                       }
                   });
