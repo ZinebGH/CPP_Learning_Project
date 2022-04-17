@@ -4,6 +4,7 @@
 
 void AircraftManager::add(std::unique_ptr<Aircraft> aircraft)
 {
+    assert(aircraft);
     aircrafts.emplace_back(std::move(aircraft));
 }
 
@@ -13,7 +14,7 @@ void AircraftManager::print_aircrafts()
                   [](auto& a1)
                   {
                       std::cout << a1->get_flight_num() << " has terminal " << a1->has_terminal()
-                                << "level fuel : " << a1->level_of_fuel() << std::endl;
+                                << " level fuel : " << a1->level_of_fuel() << std::endl;
                   });
 }
 
@@ -38,6 +39,8 @@ bool AircraftManager::move()
                   }
               });
 
+    //  decommenter pour visualiser les quantités de fuel restante d'un avion
+    // print_aircrafts();
     aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(),
                                    [this](auto& aircraft)
                                    {

@@ -23,6 +23,7 @@ private:
 
     bool service_done = false;
     mutable int fuel;
+
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
     // right way to this end, we try to face the point Z on the line spanned by
@@ -39,7 +40,9 @@ private:
     void arrive_at_terminal();
     // deploy and retract landing gear depending on next waypoints
     void operate_landing_gear();
-    void add_waypoint(const Waypoint& wp, const bool front);
+
+    template <bool front> void add_waypoint(const Waypoint& wp);
+
     bool is_on_ground() const { return pos.z() < DISTANCE_THRESHOLD; }
     float max_speed() const { return is_on_ground() ? type.max_ground_speed : type.max_air_speed; }
 
@@ -60,7 +63,7 @@ public:
         control { control_ }
     {
         speed.cap_length(max_speed());
-        fuel = MIN_FUEL + (std::rand() % (2 * MIN_FUEL));
+        fuel = MIN_FUEL + (std::rand() % (MAX_FUEL - MIN_FUEL));
     }
 
     const std::string& get_flight_num() const { return flight_number; }
@@ -74,8 +77,6 @@ public:
 
     void refill(int& fuel_stock)
     {
-        std::cout << fuel << " FUEL  " << std::endl;
-        std::cout << fuel_stock << " FUEL STOCK " << std::endl;
 
         int fuel_need = MAX_FUEL - fuel;
         int fuel_refill;
@@ -87,13 +88,14 @@ public:
         {
             fuel_refill = fuel_need;
         }
+
         if (fuel_stock > 0)
         {
             fuel_stock -= fuel_refill;
             fuel += fuel_refill;
-            std::cout << fuel << " FUEL 2 " << std::endl;
         }
     }
 
+    ~Aircraft() { control.erase_reservation(*this); }
     friend class Tower;
 };

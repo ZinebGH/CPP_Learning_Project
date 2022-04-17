@@ -21,7 +21,9 @@ struct AircraftType
         max_accel { max_accel_ },
         texture { new img::Image { sprite.get_full_path() }, num_tiles },
         fuel_level { f_lvl }
-    {}
+    {
+        assert(f_lvl > 0);
+    }
 };
 
 constexpr size_t NUM_AIRCRAFT_TYPES = 3;

@@ -39,4 +39,6 @@ public:
     void arrived_at_terminal(const Aircraft& aircraft);
 
     WaypointQueue reserve_terminal(Aircraft& aircraft);
+
+    void erase_reservation(Aircraft& aircraft);
 };

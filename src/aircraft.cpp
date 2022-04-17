@@ -76,7 +76,7 @@ void Aircraft::operate_landing_gear()
     }
 }
 
-void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
+template <bool front> void Aircraft::add_waypoint(const Waypoint& wp)
 {
     if (front)
     {
@@ -96,7 +96,11 @@ bool Aircraft::move()
         {
             return false;
         }
-        waypoints = control.get_instructions(*this);
+        const auto front = false;
+        for (const auto& wp : control.get_instructions(*this))
+        {
+            add_waypoint<front>(wp);
+        }
     }
 
     if (!is_at_terminal)
@@ -182,6 +186,7 @@ void Aircraft::fuel_level()
 
     if (fuel <= 0)
     {
+
         throw AircraftCrash { flight_number + " crashed of fuel" };
     }
 }

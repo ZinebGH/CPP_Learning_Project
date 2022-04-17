@@ -35,6 +35,7 @@ public:
         if (!is_servicing())
         {
             std::cout << "done servicing " << current_aircraft->get_flight_num() << '\n';
+
             current_aircraft = nullptr;
         }
     }
@@ -56,9 +57,13 @@ public:
         {
 
             current_aircraft->refill(fuel_stock);
-
-            std::cout << current_aircraft->get_flight_num()
-                      << " refill : " << current_aircraft->level_of_fuel() << " fuel 3 " << std::endl;
+            if (!is_servicing())
+            {
+                std::cout << current_aircraft->get_flight_num()
+                          << " refill : " << current_aircraft->level_of_fuel() << " fuel " << std::endl;
+            }
         }
     }
+
+    void erase() { current_aircraft = nullptr; }
 };
