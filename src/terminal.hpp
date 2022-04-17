@@ -55,14 +55,11 @@ public:
             current_aircraft->in_terminal())
 
         {
-
             current_aircraft->refill(fuel_stock);
 
-            {
-                std::cout << current_aircraft->get_flight_num()
-                          << " refill : " << current_aircraft->level_of_fuel() << " fuel " << std::endl;
-            }
+            std::cout << current_aircraft->get_flight_num()
+                      << " refill : " << current_aircraft->level_of_fuel() << " fuel " << std::endl;
         }
-
-        void erase() { current_aircraft = nullptr; }
-    };
+    }
+    void erase() { current_aircraft = nullptr; }
+};
