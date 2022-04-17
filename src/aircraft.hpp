@@ -22,7 +22,7 @@ private:
     bool is_at_terminal        = false;
 
     bool service_done = false;
-    mutable int fuel;
+    int fuel;
 
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
